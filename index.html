@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EL ROYALE HTCI - Library System</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js para sa Reports Graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-view" class="view active-view">
+    <div class="login-wrapper">
+      <div class="login-left-bg">
+        <div class="brand-hero">
+          <svg class="brand-logo-svg" viewBox="0 0 720 260" role="img" aria-label="El Royale Logo">
+            <defs>
+              <linearGradient id="goldStroke" x1="0%" x2="100%" y1="0%" y2="0%">
+                <stop offset="0%" stop-color="#f7d88a"/>
+                <stop offset="50%" stop-color="#e9b94c"/>
+                <stop offset="100%" stop-color="#f4c96b"/>
+              </linearGradient>
+              <linearGradient id="blueStroke" x1="0%" x2="100%" y1="0%" y2="0%">
+                <stop offset="0%" stop-color="#1d6df2"/>
+                <stop offset="100%" stop-color="#0d4ebd"/>
+              </linearGradient>
+              <linearGradient id="greenStroke" x1="0%" x2="100%" y1="0%" y2="0%">
+                <stop offset="0%" stop-color="#2de1a6"/>
+                <stop offset="100%" stop-color="#1ea76d"/>
+              </linearGradient>
+            </defs>
+            <path d="M30 138 C120 25, 255 25, 360 138 C445 205, 560 205, 690 138" fill="none" stroke="url(#blueStroke)" stroke-width="18" stroke-linecap="round"/>
+            <path d="M42 142 C118 42, 250 42, 360 142 C482 246, 572 246, 678 142" fill="none" stroke="url(#greenStroke)" stroke-width="18" stroke-linecap="round"/>
+            <text x="360" y="170" text-anchor="middle" fill="url(#goldStroke)" font-size="118" font-weight="700" font-family="Georgia, 'Times New Roman', serif" font-style="italic" letter-spacing="1">EL ROYALE</text>
+            <text x="360" y="220" text-anchor="middle" fill="#f7d88a" font-size="30" font-weight="600" font-family="Segoe UI, Tahoma, sans-serif" letter-spacing="3">HOTELIER TRAINING CENTER</text>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="login-right-card">
+        <div class="login-box">
+          <h3><i class="fa-solid fa-user-lock"></i> Login to Your Account</h3>
+          <form id="login-form">
+            <div class="form-group">
+              <i class="fa-solid fa-user"></i>
+              <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn-primary btn-block">Sign In <i class="fa-solid fa-arrow-right"></i></button>
+            <p class="form-footer">Don't have an account? <button type="button" class="link-button" id="register-link">Register here</button></p>
+            <p id="auth-message" class="status-message hidden" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APP DASHBOARD -->
+  <div id="main-layout" class="app-layout hidden">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-graduation-cap logo-icon"></i>
+        <span>EL ROYALE</span>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="#" class="nav-item active" data-target="dashboard-view">
+          <i class="fa-solid fa-grid-2"></i> <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-target="catalog-view">
+          <i class="fa-solid fa-book-bookmark"></i> <span>Books / Catalog</span>
+        </a>
+        <a href="#" id="admin-books-nav" class="nav-item admin-only hidden" data-target="admin-books-view">
+          <i class="fa-solid fa-book-medical"></i> <span>Manage Books</span>
+        </a>
+        <a href="#" class="nav-item" data-target="borrowing-view">
+          <i class="fa-solid fa-hand-holding-hand"></i> <span>Borrowing / Returning</span>
+        </a>
+        <a href="#" class="nav-item" data-target="users-view">
+          <i class="fa-solid fa-users"></i> <span>Users</span>
+        </a>
+        <a href="#" class="nav-item" data-target="notifications-view">
+          <i class="fa-solid fa-bell"></i> <span>Notification</span>           <span class="badge red notification-count hidden">0</span>
+        </a>
+        <a href="#" class="nav-item" data-target="reports-view">
+          <i class="fa-solid fa-chart-line"></i> <span>Reports</span>
+        </a>
+        <a href="#" class="nav-item" data-target="settings-view">
+          <i class="fa-solid fa-gear"></i> <span>Settings</span>
+        </a>
+        <a href="#" class="nav-item logout-item" id="open-logout-modal">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+        </a>
+      </nav>
+    </aside>
+
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button"
+      aria-label="Open navigation menu" aria-controls="app-sidebar" aria-expanded="false">
+      <i class="fa-solid fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <!-- Main Content Body -->
+    <main class="main-content">
+      <!-- Top Header Bar -->
+      <header class="top-header">
+        <div class="search-global">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="global-search" type="text" placeholder="Search books, authors, categories...">
+        </div>
+
+        <div class="header-user-area">
+          <div class="icon-btn-wrap">
+            <button class="icon-btn" id="header-notif-btn" type="button" aria-label="Notifications">
+              <i class="fa-solid fa-bell"></i>
+              <span class="dot notification-dot hidden"></span>
+            </button>
+
+            <div id="notification-panel" class="dropdown-panel hidden" aria-live="polite">
+              <div class="dropdown-header">
+                <span>Notifications</span>
+                <span class="panel-count" id="notification-panel-count">0</span>
+              </div>
+              <div id="notification-dropdown-items"></div>
+            </div>
+          </div>
+
+          <div class="profile-menu-wrap">
+            <button class="user-profile-badge" id="header-profile-btn" type="button" aria-label="User profile">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar">
+              <div class="user-text">
+                <span class="name">Angel Villalon</span>
+                <span class="role">Student</span>
+              </div>
+              <i class="fa-solid fa-chevron-down caret"></i>
+            </button>
+
+            <div id="profile-menu" class="dropdown-panel profile-menu hidden">
+              <a href="#" class="dropdown-item route-link" data-target="users-view">
+                <i class="fa-solid fa-user"></i>
+                <span>View Profile</span>
+              </a>
+              <a href="#" class="dropdown-item route-link" data-target="settings-view">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+              </a>
+              <a href="#" class="dropdown-item route-link" data-target="notifications-view">
+                <i class="fa-solid fa-envelope"></i>
+                <span>Messages</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item danger-item" id="profile-logout-link">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="content-container">
+        <p id="app-message" class="status-message hidden" role="status" aria-live="polite"></p>
+        
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-view" class="sub-view active">
+          <div class="view-header">
+            <h2>Dashboard</h2>
+            <p>Welcome back, Angel!</p>
+          </div>
+
+          <div class="banner-card">
+            <div class="banner-text">
+              <i class="fa-solid fa-quote-left"></i>
+              <h3>"Learn Today, Lead Tomorrow."</h3>
+            </div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="stats-cards-grid">
+            <div class="stat-box blue">
+              <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+              <div class="stat-data">
+                <h4>Total Books</h4>
+                <h2 id="stat-total-books">0</h2>
+              </div>
+            </div>
+            <div class="stat-box cyan">
+              <div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
+              <div class="stat-data">
+                <h4>Total Borrowers</h4>
+                <h2 id="stat-total-borrowers">0</h2>
+              </div>
+            </div>
+            <div class="stat-box orange">
+              <div class="stat-icon"><i class="fa-solid fa-hand-holding-book"></i></div>
+              <div class="stat-data">
+                <h4>Active Loans</h4>
+                <h2 id="stat-active-loans">0</h2>
+              </div>
+            </div>
+            <div class="stat-box pink">
+              <div class="stat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+              <div class="stat-data">
+                <h4>Overdue</h4>
+                <h2 id="stat-overdue">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity & Promo Banner -->
+          <div class="grid-2-1">
+            <div class="card-panel">
+              <div class="panel-head">
+                <h3>Recent Activities</h3>
+                <a href="#" class="link-more route-link" data-target="notifications-view">View All</a>
+              </div>
+              <div class="activity-list" id="activity-list"></div>
+            </div>
+
+            <div class="card-panel promo-purple">
+              <i class="fa-solid fa-book-bookmark promo-icon"></i>
+              <h3>EL ROYALE</h3>
+              <p>Explore library resources, stay update & grow!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOOKS / CATALOG VIEW -->
+        <div id="catalog-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>Book Catalog</h2>
+            <p>Search and browse our available books and resources.</p>
+          </div>
+
+          <div class="filter-toolbar">
+            <select id="filter-author" aria-label="Filter by author"><option value="">All Authors</option></select>
+            <select id="filter-category" aria-label="Filter by category"><option value="">All Categories</option></select>
+            <select id="filter-availability" aria-label="Filter by availability">
+              <option value="">All Availability</option>
+              <option value="available">Available</option>
+              <option value="borrowed">Currently borrowed</option>
+            </select>
+          </div>
+
+          <div id="no-book-result" class="no-result hidden">No books found for your search.</div>
+          <div class="book-cards-grid" id="book-cards-grid"></div>
+        </div>
+
+        <div id="admin-books-view" class="sub-view admin-only hidden">
+          <div class="view-header">
+            <h2>Manage Books</h2>
+            <p>Add books to the catalog, update book details and copies, or remove books without borrowing history.</p>
+          </div>
+          <div class="card-panel admin-book-form-panel">
+            <h3 id="book-form-heading">Add a book</h3>
+            <form id="admin-book-form" class="admin-book-form">
+              <input id="admin-book-id" name="id" type="hidden">
+              <div class="form-group-flat">
+                <label for="admin-book-title">Title</label>
+                <input id="admin-book-title" name="title" type="text" maxlength="255" required>
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-author">Author</label>
+                <input id="admin-book-author" name="author" type="text" maxlength="140" required>
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-category">Category</label>
+                <input id="admin-book-category" name="category" type="text" maxlength="100" required>
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-isbn">ISBN (optional)</label>
+                <input id="admin-book-isbn" name="isbn" type="text" maxlength="20" placeholder="9780141439518">
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-year">Publication year (optional)</label>
+                <input id="admin-book-year" name="published_year" type="number" min="1450" placeholder="1813">
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-copies">Total copies</label>
+                <input id="admin-book-copies" name="copies" type="number" min="1" max="100000" value="1" required>
+              </div>
+              <div class="form-group-flat">
+                <label for="admin-book-cover">Cover image URL (optional)</label>
+                <input id="admin-book-cover" name="cover_url" type="url" maxlength="500" placeholder="https://example.com/book-cover.jpg">
+              </div>
+              <div class="admin-book-actions">
+                <button id="admin-book-submit" type="submit" class="btn-primary">Add Book</button>
+                <button id="admin-book-cancel" type="button" class="btn-secondary hidden">Cancel Edit</button>
+              </div>
+            </form>
+          </div>
+          <div class="card-panel admin-book-list-panel">
+            <h3>Catalog Inventory</h3>
+            <div class="admin-table-scroll">
+              <table class="styled-table">
+                <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>ISBN</th><th>Published</th><th>Copies</th><th>Available</th><th>Actions</th></tr></thead>
+                <tbody id="admin-books-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- BORROWING / RETURNING VIEW -->
+        <div id="borrowing-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>Borrowing / Returns</h2>
+            <p id="loans-view-description">Your borrowing history.</p>
+          </div>
+          <div class="card-panel">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>Book Title</th>
+                  <th class="admin-only hidden">Borrower</th>
+                  <th>Borrowed Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th class="admin-only hidden">Admin Action</th>
+                </tr>
+              </thead>
+              <tbody id="loans-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- USERS / MY INFORMATION VIEW -->
+        <div id="users-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>My Information</h2>
+          </div>
+          <div class="grid-2-1">
+            <div class="card-panel profile-box">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" class="profile-lg" alt="Profile">
+              <div class="user-meta">
+                <p><strong>Username:</strong> <span id="profile-username"></span></p>
+                <p><strong>Course:</strong> <span id="profile-course"></span></p>
+                <p><strong>Year Level:</strong> <span id="profile-year"></span></p>
+                <p><strong>Contact No:</strong> <span id="profile-contact"></span></p>
+                <button type="button" class="btn-primary btn-sm route-button" data-target="settings-view"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+              </div>
+            </div>
+
+            <div class="card-panel status-card">
+              <h3>Account Status</h3>
+              <div class="status-pill green">
+                <i class="fa-solid fa-circle-check"></i> Active Account
+              </div>
+              <p class="member-date">Member since: <span id="member-since"></span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATION VIEW -->
+        <div id="notifications-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>Notifications</h2>
+          </div>
+          <div class="card-panel">
+            <div class="notif-list" id="notifications-list"></div>
+          </div>
+        </div>
+
+        <!-- REPORTS VIEW -->
+        <div id="reports-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>Reports</h2>
+          </div>
+          <div class="stats-cards-grid">
+            <div class="stat-box blue">
+              <h4>Book Inventory</h4>
+              <h2 id="report-total-books">0</h2>
+            </div>
+            <div class="stat-box cyan">
+              <h4>Total Borrowers</h4>
+              <h2 id="report-total-borrowers">0</h2>
+            </div>
+            <div class="stat-box purple">
+              <h4>Total Transactions</h4>
+              <h2 id="report-total-transactions">0</h2>
+            </div>
+          </div>
+          <div class="grid-2-1" style="margin-top: 20px;">
+            <div class="card-panel">
+              <h3>Reports Overview</h3>
+              <div class="report-chart-frame">
+                <canvas id="reportsChart"></canvas>
+              </div>
+            </div>
+            <div class="card-panel">
+              <h3>Book Categories</h3>
+              <div class="report-chart-frame">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="settings-view" class="sub-view hidden">
+          <div class="view-header">
+            <h2>Settings</h2>
+          </div>
+          <div class="card-panel max-600">
+            <div class="settings-nav" role="tablist">
+              <button type="button" class="tab-btn active" data-settings-tab="account" role="tab" aria-selected="true">Account</button>
+              <button type="button" class="tab-btn" data-settings-tab="security" role="tab" aria-selected="false">Security</button>
+              <button type="button" class="tab-btn" data-settings-tab="appearance" role="tab" aria-selected="false">Appearance</button>
+            </div>
+            <form class="settings-form" id="profile-form" data-settings-panel="account">
+              <div class="form-group-flat"><label for="setting-name">Name</label><input id="setting-name" name="name" type="text" maxlength="120" required></div>
+              <div class="form-group-flat"><label for="setting-username">Username</label><input id="setting-username" name="username" type="text" minlength="3" maxlength="50" required></div>
+              <div class="form-group-flat"><label for="setting-course">Course</label><input id="setting-course" name="course" type="text" maxlength="160"></div>
+              <div class="form-group-flat"><label for="setting-year">Year Level</label><input id="setting-year" name="year_level" type="text" maxlength="60"></div>
+              <div class="form-group-flat"><label for="setting-contact">Contact No.</label><input id="setting-contact" name="contact_no" type="tel" maxlength="40"></div>
+              <button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+            </form>
+            <form class="settings-form hidden" id="password-form" data-settings-panel="security">
+              <div class="form-group-flat"><label for="current-password">Current password</label><input id="current-password" name="current_password" type="password" autocomplete="current-password" required></div>
+              <div class="form-group-flat"><label for="new-password">New password (at least 8 characters)</label><input id="new-password" name="new_password" type="password" minlength="8" autocomplete="new-password" required></div>
+              <button type="submit" class="btn-primary"><i class="fa-solid fa-lock"></i> Update Password</button>
+            </form>
+            <form class="settings-form hidden" id="appearance-form" data-settings-panel="appearance">
+              <div class="form-group-flat">
+                <label for="theme-select">Appearance</label>
+                <select id="theme-select" name="theme"><option value="light">Light</option><option value="dark">Dark</option></select>
+              </div>
+              <button type="submit" class="btn-primary"><i class="fa-solid fa-palette"></i> Save Appearance</button>
+            </form>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <div id="book-preview-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="book-preview-title">
+    <div class="modal-card book-preview-card">
+      <div class="book-preview-header">
+        <div>
+          <h2 id="book-preview-title">Book Preview</h2>
+          <p id="book-preview-author"></p>
+        </div>
+        <button id="close-book-preview" class="btn-secondary book-preview-close" type="button" aria-label="Close book preview">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <p id="book-preview-notice" class="book-preview-notice">
+        Preview pages are provided by Google Books when available.
+      </p>
+      <iframe id="book-preview-frame" title="Book reading preview" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <a id="book-preview-link" class="btn-primary book-preview-link" href="#" target="_blank" rel="noopener noreferrer">
+        Open preview in Google Books
+      </a>
+    </div>
+  </div>
+
+  <!-- LOGOUT MODAL -->
+  <div id="logout-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-icon-wrap"><i class="fa-solid fa-right-from-bracket"></i></div>
+      <h3>Are you sure you want to logout?</h3>
+      <p>You will be returned to the login page.</p>
+      <div class="modal-btns">
+        <button id="confirm-logout-btn" class="btn-danger">Log-out</button>
+        <button id="cancel-logout-btn" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="register-modal" class="modal-overlay hidden">
+    <div class="modal-card register-card">
+      <div class="modal-icon-wrap"><i class="fa-solid fa-user-plus"></i></div>
+      <h3>Create an Account</h3>
+      <form id="register-form">
+        <div class="form-group-flat">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" placeholder="Juan Dela Cruz" maxlength="120" autocomplete="name" required>
+        </div>
+        <div class="form-group-flat">
+          <label for="reg-username">Username</label>
+          <input type="text" id="reg-username" placeholder="Choose a username" minlength="3" maxlength="50" autocomplete="username" required>
+        </div>
+        <div class="form-group-flat">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" placeholder="At least 8 characters" minlength="8" autocomplete="new-password" required>
+        </div>
+        <div class="modal-btns register-actions">
+          <button type="submit" class="btn-primary">Register</button>
+          <button type="button" id="close-register-modal" class="btn-secondary">Cancel</button>
+        </div>
+        <p id="register-message" class="status-message hidden" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>
